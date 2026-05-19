@@ -1,4 +1,3 @@
-# app/config/database.py
 import os
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
@@ -14,5 +13,5 @@ if not MONGO_URI:
 # Conectar al cliente
 client = AsyncIOMotorClient(MONGO_URI)
 
-# SOLUCIÓN: Forzar el nombre de la base de datos directamente
+#Nombre de la base de datos 
 db = client["atrium_db"]
