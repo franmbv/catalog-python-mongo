@@ -1,4 +1,6 @@
 from fastapi import APIRouter
+from app.config.database import db
+from app.schemas.category import CategoryCreate, CategoryResponse
 
 router = APIRouter(prefix="/category",tags=["Categories"])
 
@@ -14,8 +16,7 @@ router = APIRouter(prefix="/category",tags=["Categories"])
 #Enpoint - Delete
 
 #===================
-from app.config.database import db
-from app.schemas.category import CategoryCreate, CategoryResponse
+
 
 # Endpoint - Create
 @router.post("/", response_model=CategoryResponse)

@@ -20,34 +20,25 @@ from pydantic import BaseModel,Field
 #Este 'scheme' heredara simplemente de 'ArtworkBase'
 
 
+from pydantic import BaseModel, Field
+from typing import Optional
+
 class ArtworkBase(BaseModel):
-    """
-    Schema base que define la estructura común para las obras de arte.
-    Cruza los datos del Core en Node.js con los detalles dinámicos en Mongo.
-    """
-    id_sql: int = Field(
-        ..., 
-        description="Identificador único correlativo proveniente de la base de datos relacional de Node.js"
-    )
-    id_category: int = Field(
-        ..., 
-        description="ID SQL de la categoría a la que pertenece esta obra"
-    )
-    detalles: dict[str, str] = Field(
-        ..., 
-        description="Lista de strings que almacena las características y detalles dinámicos de la obra"
-    )
+    id_sql: int = Field(..., description="ID de la obra en SQL (id)")
+    genero_id: int = Field(..., description="ID del género/categoría (genero_id)")
+    autor_id: int = Field(..., description="ID del artista/autor (autor_id)")
+    nombre: str = Field(..., max_length=150, description="Nombre de la obra")
+    fecha_creacion: Optional[str] = Field(None, description="Fecha de creación (fechaCreacion)")
+    precio_obra: float = Field(..., description="Precio base (precioObra)")
+    porcentaje_ganancia: Optional[float] = Field(None, description="Entre 5 y 10 por ciento")
+    estatus: str = Field("Disponible", description="Valores: Disponible, Reservada, Vendida")
+    foto: Optional[str] = Field(None, description="Ruta de la imagen de la obra")
+    
+    # NUESTRO SELLO POLIMÓRFICO: Aquí mueren las 5 tablas extras de SQL
+    detalles: dict[str, str] = Field(..., description="Diccionario con campos dinámicos (Ej: tecnica, peso, tipoEsmalte)")
 
 class ArtworkCreate(ArtworkBase):
-    """
-    Schema utilizado para la creación de nuevas obras en el microservicio.
-    Hereda directamente de ArtworkBase sin campos adicionales por ahora.
-    """
     pass
 
 class ArtworkResponse(ArtworkBase):
-    """
-    Schema utilizado para estructurar las respuestas HTTP enviadas al cliente.
-    Hereda directamente de ArtworkBase sin campos adicionales por ahora.
-    """
     pass
