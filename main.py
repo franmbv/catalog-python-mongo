@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes import artworks,catalog,categories
+from app.routes import artists,artworks,catalog,categories
 
 app = FastAPI(title="Atrium Catalog API")
 
@@ -23,7 +23,9 @@ app.add_middleware(
 #----Configuración de CORS
 
 
+
+app.include_router(artists.router)
+app.include_router(categories.router)
 app.include_router(artworks.router)
 app.include_router(catalog.router)
-app.include_router(categories.router)
 

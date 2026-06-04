@@ -13,5 +13,6 @@ if not MONGO_URI:
 # Conectar al cliente
 client = AsyncIOMotorClient(MONGO_URI)
 
-#Nombre de la base de datos 
+#
+# SOLUCIÓN: Forzar el nombre de la base de datos directamente
 db = client["atrium_db"]
