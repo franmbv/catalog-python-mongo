@@ -8,6 +8,7 @@ ENV/
 .env
 .env.local
 .env.*
+!.env.example
 
 # Archivos de caché de Python
 **/__pycache__/

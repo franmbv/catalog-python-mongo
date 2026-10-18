@@ -1,7 +1,8 @@
 import asyncio
 from datetime import datetime, timezone
 
-from app.config.database import db
+from app.persistence.config.database import get_database, close_mongo_client
+from app.persistence.indexes import init_indexes
 
 # ===================================================================
 # COLECCIONES
@@ -444,9 +445,18 @@ ARTWORKS = [
 
 
 async def seed():
+    db = get_database()
     print("=" * 50)
-    print("  SEED — Atrium Catalog")
+    print("  SEED — Atrium Catalog (Microservice)")
     print("=" * 50)
+
+    # ── Inicializar Índices ───────────────────────────────────────
+    print("\n[ÍNDICES] Creando índices en MongoDB...")
+    try:
+        await init_indexes(db)
+        print("   [OK] Índices creados exitosamente")
+    except Exception as e:
+        print(f"   [WARN] No se pudieron crear los índices: {e}")
 
     # ── Categorías ────────────────────────────────────────────────
     print("\n[CATEGORÍAS] Insertando...")
@@ -485,6 +495,8 @@ async def seed():
     print(f"     Artistas:   {len(ARTISTS)}")
     print(f"     Obras:      {len(ARTWORKS)}")
     print("=" * 50)
+
+    close_mongo_client()
 
 
 if __name__ == "__main__":
