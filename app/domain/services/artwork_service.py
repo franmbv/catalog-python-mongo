@@ -23,29 +23,29 @@ class ArtworkService:
         self.category_repo = category_repo
 
     def validate_polymorphic_details(self, category: Category, detalles: dict[str, str]) -> None:
-        """Verifica que todos los campos requeridos por la categoría estén en detalles."""
+        """Verifies that all required fields for the category are present in details."""
         for campo in category.detalles:
             if campo not in detalles or detalles[campo] is None:
                 raise InvalidPolymorphicDetailsError(
-                    f"Validación de estructura NoSQL fallida: el campo '{campo}' es obligatorio para el género {category.id_sql}."
+                    f"Polymorphic schema validation failed: the field '{campo}' is required for category {category.id_sql}."
                 )
 
     async def create_artwork(self, artwork: Artwork, sync_mode: bool = False) -> Artwork:
         existing = await self.artwork_repo.get_by_id_sql(artwork.id_sql)
         if existing and not sync_mode:
-            raise EntityAlreadyExistsError(f"La obra con ID {artwork.id_sql} ya está registrada.")
+            raise EntityAlreadyExistsError(f"Artwork with ID {artwork.id_sql} is already registered.")
 
-        # Validar existencia de autor
+        # Validate artist existence
         artist = await self.artist_repo.get_by_id_sql(artwork.autor_id)
         if not artist:
-            raise EntityNotFoundError(f"El artista con ID {artwork.autor_id} no existe.")
+            raise EntityNotFoundError(f"Artist with ID {artwork.autor_id} does not exist.")
 
-        # Validar existencia de categoría
+        # Validate category existence
         category = await self.category_repo.get_by_id_sql(artwork.genero_id)
         if not category:
-            raise EntityNotFoundError(f"La categoría con ID {artwork.genero_id} no existe.")
+            raise EntityNotFoundError(f"Category with ID {artwork.genero_id} does not exist.")
 
-        # Validar regla polimórfica
+        # Validate polymorphic rule
         self.validate_polymorphic_details(category, artwork.detalles)
 
         if sync_mode:
@@ -55,7 +55,7 @@ class ArtworkService:
     async def get_artwork(self, id_sql: int) -> Artwork:
         artwork = await self.artwork_repo.get_by_id_sql(id_sql)
         if not artwork:
-            raise EntityNotFoundError(f"Obra con ID {id_sql} no encontrada.")
+            raise EntityNotFoundError(f"Artwork with ID {id_sql} not found.")
         return artwork
 
     async def update_artwork(self, id_sql: int, data: dict) -> Artwork:
@@ -65,16 +65,16 @@ class ArtworkService:
         target_genero_id = data.get("genero_id", current.genero_id)
         target_detalles = data.get("detalles", current.detalles)
 
-        # Validar autor y categoría si cambiaron
+        # Validate author and category if modified
         artist = await self.artist_repo.get_by_id_sql(target_autor_id)
         if not artist:
-            raise EntityNotFoundError(f"El artista con ID {target_autor_id} no existe.")
+            raise EntityNotFoundError(f"Artist with ID {target_autor_id} does not exist.")
 
         category = await self.category_repo.get_by_id_sql(target_genero_id)
         if not category:
-            raise EntityNotFoundError(f"La categoría con ID {target_genero_id} no existe.")
+            raise EntityNotFoundError(f"Category with ID {target_genero_id} does not exist.")
 
-        # Re-validar detalles polimórficos
+        # Re-validate polymorphic details
         self.validate_polymorphic_details(category, target_detalles)
 
         return await self.artwork_repo.update(id_sql, data)

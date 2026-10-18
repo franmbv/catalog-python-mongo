@@ -15,7 +15,7 @@ def get_mongo_client() -> AsyncIOMotorClient:
     global _client
     if _client is None:
         if not MONGO_URI:
-            raise ValueError("ERROR: La variable de entorno MONGO_URI no está configurada")
+            raise ValueError("ERROR: The MONGO_URI environment variable is not configured")
         _client = AsyncIOMotorClient(MONGO_URI)
     return _client
 

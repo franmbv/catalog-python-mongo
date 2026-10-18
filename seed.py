@@ -5,14 +5,14 @@ from app.persistence.config.database import get_database, close_mongo_client
 from app.persistence.indexes import init_indexes
 
 # ===================================================================
-# COLECCIONES
+# COLLECTIONS
 # ===================================================================
 COL_CATEGORIES = "categories"
 COL_ARTISTS = "artists"
 COL_ARTWORKS = "artworks"
 
 # ===================================================================
-# CATEGORÍAS (5)
+# CATEGORIES (5)
 # ===================================================================
 CATEGORIES = [
     {
@@ -38,7 +38,7 @@ CATEGORIES = [
 ]
 
 # ===================================================================
-# ARTISTAS (10)
+# ARTISTS (10)
 # ===================================================================
 ARTISTS = [
     {
@@ -154,10 +154,10 @@ ARTISTS = [
 ]
 
 # ===================================================================
-# OBRAS (15 — 3 por cada género)
+# ARTWORKS (15 — 3 per category)
 # ===================================================================
 ARTWORKS = [
-    # --- PINTURA (id_sql 1 — genero_id 1) ---
+    # --- PAINTING (id_sql 1 — genero_id 1) ---
     {
         "id_sql": 1,
         "genero_id": 1,
@@ -209,7 +209,7 @@ ARTWORKS = [
             "ancho_cm": "76",
         },
     },
-    # --- ESCULTURA (id_sql 4-6 — genero_id 2) ---
+    # --- SCULPTURE (id_sql 4-6 — genero_id 2) ---
     {
         "id_sql": 4,
         "genero_id": 2,
@@ -264,7 +264,7 @@ ARTWORKS = [
             "profundidad_cm": "30",
         },
     },
-    # --- FOTOGRAFÍA (id_sql 7-9 — genero_id 3) ---
+    # --- PHOTOGRAPHY (id_sql 7-9 — genero_id 3) ---
     {
         "id_sql": 7,
         "genero_id": 3,
@@ -319,7 +319,7 @@ ARTWORKS = [
             "edicion": "",
         },
     },
-    # --- CERÁMICA (id_sql 10-12 — genero_id 4) ---
+    # --- CERAMICS (id_sql 10-12 — genero_id 4) ---
     {
         "id_sql": 10,
         "genero_id": 4,
@@ -380,7 +380,7 @@ ARTWORKS = [
             "esmaltado": "",
         },
     },
-    # --- ORFEBRERÍA (id_sql 13-15 — genero_id 5) ---
+    # --- GOLDSMITHING / JEWELRY (id_sql 13-15 — genero_id 5) ---
     {
         "id_sql": 13,
         "genero_id": 5,
@@ -450,50 +450,50 @@ async def seed():
     print("  SEED — Atrium Catalog (Microservice)")
     print("=" * 50)
 
-    # ── Inicializar Índices ───────────────────────────────────────
-    print("\n[ÍNDICES] Creando índices en MongoDB...")
+    # ── Initialize Indexes ───────────────────────────────────────
+    print("\n[INDEXES] Creating MongoDB indexes...")
     try:
         await init_indexes(db)
-        print("   [OK] Índices creados exitosamente")
+        print("   [OK] Indexes created successfully")
     except Exception as e:
-        print(f"   [WARN] No se pudieron crear los índices: {e}")
+        print(f"   [WARN] Could not create indexes: {e}")
 
-    # ── Categorías ────────────────────────────────────────────────
-    print("\n[CATEGORÍAS] Insertando...")
+    # ── Categories ────────────────────────────────────────────────
+    print("\n[CATEGORIES] Inserting...")
     for cat in CATEGORIES:
         existing = await db[COL_CATEGORIES].find_one({"id_sql": cat["id_sql"]})
         if existing:
-            print(f"   [SKIP] id_sql={cat['id_sql']} ya existe")
+            print(f"   [SKIP] id_sql={cat['id_sql']} already exists")
             continue
         await db[COL_CATEGORIES].insert_one(cat)
-        print(f"   [OK] id_sql={cat['id_sql']} insertada")
+        print(f"   [OK] id_sql={cat['id_sql']} inserted")
 
-    # ── Artistas ──────────────────────────────────────────────────
-    print("\n[ARTISTAS] Insertando...")
+    # ── Artists ──────────────────────────────────────────────────
+    print("\n[ARTISTS] Inserting...")
     for art in ARTISTS:
         existing = await db[COL_ARTISTS].find_one({"id_sql": art["id_sql"]})
         if existing:
-            print(f"   [SKIP] id_sql={art['id_sql']} — {art['nombre']} {art['apellido']} ya existe")
+            print(f"   [SKIP] id_sql={art['id_sql']} — {art['nombre']} {art['apellido']} already exists")
             continue
         await db[COL_ARTISTS].insert_one(art)
         print(f"   [OK] id_sql={art['id_sql']} — {art['nombre']} {art['apellido']}")
 
-    # ── Obras ─────────────────────────────────────────────────────
-    print("\n[OBRAS] Insertando...")
+    # ── Artworks ─────────────────────────────────────────────────────
+    print("\n[ARTWORKS] Inserting...")
     for obra in ARTWORKS:
         existing = await db[COL_ARTWORKS].find_one({"id_sql": obra["id_sql"]})
         if existing:
-            print(f"   [SKIP] id_sql={obra['id_sql']} — '{obra['nombre']}' ya existe")
+            print(f"   [SKIP] id_sql={obra['id_sql']} — '{obra['nombre']}' already exists")
             continue
         await db[COL_ARTWORKS].insert_one(obra)
         print(f"   [OK] id_sql={obra['id_sql']} — '{obra['nombre']}'")
 
-    # ── Resumen ───────────────────────────────────────────────────
+    # ── Summary ───────────────────────────────────────────────────
     print("\n" + "=" * 50)
-    print("  [COMPLETADO] Seed finalizado exitosamente")
-    print(f"     Categorías: {len(CATEGORIES)}")
-    print(f"     Artistas:   {len(ARTISTS)}")
-    print(f"     Obras:      {len(ARTWORKS)}")
+    print("  [COMPLETED] Seeding finished successfully")
+    print(f"     Categories: {len(CATEGORIES)}")
+    print(f"     Artists:    {len(ARTISTS)}")
+    print(f"     Artworks:   {len(ARTWORKS)}")
     print("=" * 50)
 
     close_mongo_client()

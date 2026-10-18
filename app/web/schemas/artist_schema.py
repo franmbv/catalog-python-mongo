@@ -10,11 +10,11 @@ class ArtistBaseDTO(BaseModel):
     nacionalidad: Optional[str] = Field(None, max_length=50)
     descripcion: Optional[str] = None
     fotografia: Optional[str] = Field(None, max_length=255)
-    estado: str = Field("Activo", description="Activo o Inactivo")
+    estado: str = Field("Activo", description="Artist status: Active or Inactive")
 
 
 class ArtistCreateDTO(ArtistBaseDTO):
-    id_sql: int = Field(..., description="ID del artista en el núcleo SQL")
+    id_sql: int = Field(..., description="Artist ID in core SQL database")
 
 
 class ArtistUpdateDTO(BaseModel):

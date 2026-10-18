@@ -15,7 +15,7 @@ router = APIRouter(tags=["Categories"])
 @router.post("/", response_model=CategoryResponseDTO, status_code=status.HTTP_201_CREATED)
 async def create_category(
     dto: CategoryCreateDTO,
-    sync: bool = Query(False, description="Si es True, realiza un Upsert idempotente para sincronización"),
+    sync: bool = Query(False, description="If True, performs an idempotent Upsert for synchronization"),
     service: CategoryService = Depends(get_category_service),
 ):
     category_model = Category(**dto.model_dump())
@@ -55,4 +55,4 @@ async def delete_category(
     service: CategoryService = Depends(get_category_service),
 ):
     await service.delete_category(id)
-    return {"msg": "Categoría borrada", "id_sql": id}
+    return {"msg": "Category deleted", "id_sql": id}

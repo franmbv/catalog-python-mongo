@@ -5,7 +5,7 @@ from app.web.dependencies import get_db
 router = APIRouter(prefix="/health", tags=["Health"])
 
 
-@router.get("", summary="Verifica el estado del microservicio y la conexión a MongoDB")
+@router.get("", summary="Check microservice health and MongoDB connection status")
 async def health_check(db: AsyncIOMotorDatabase = Depends(get_db)):
     try:
         await db.command("ping")
@@ -16,5 +16,5 @@ async def health_check(db: AsyncIOMotorDatabase = Depends(get_db)):
     except Exception as exc:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Fallo en la conexión a la base de datos: {str(exc)}",
+            detail=f"Database connection failure: {str(exc)}",
         )

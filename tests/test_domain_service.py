@@ -52,7 +52,7 @@ async def test_create_artwork_fails_missing_polymorphic_detail(mock_repos):
     category_repo.get_by_id_sql.return_value = Category(id_sql=1, detalles=["tecnica", "soporte"])
     artwork_repo.get_by_id_sql.return_value = None
 
-    # Falta 'soporte'
+    # Missing 'soporte'
     artwork = Artwork(
         id_sql=101,
         genero_id=1,

@@ -17,7 +17,7 @@ class MongoCatalogRepository(CatalogRepository):
     ) -> list[dict]:
         pipeline = []
 
-        # 1. Filtros dinámicos ($match)
+        # 1. Dynamic filters ($match)
         match_stage = {}
         if genero_id is not None:
             match_stage["genero_id"] = genero_id
@@ -29,7 +29,7 @@ class MongoCatalogRepository(CatalogRepository):
         if match_stage:
             pipeline.append({"$match": match_stage})
 
-        # 2. Join con la colección de artistas ($lookup)
+        # 2. Join with artists collection ($lookup)
         pipeline.append({
             "$lookup": {
                 "from": "artists",
@@ -39,7 +39,7 @@ class MongoCatalogRepository(CatalogRepository):
             }
         })
 
-        # 3. Desanidar el resultado del artista ($unwind)
+        # 3. Unwind artist information ($unwind)
         pipeline.append({
             "$unwind": {
                 "path": "$informacion_artista",
@@ -47,7 +47,7 @@ class MongoCatalogRepository(CatalogRepository):
             }
         })
 
-        # 4. Proyección limpia para excluir ObjectIds internos de Mongo
+        # 4. Projection to exclude internal Mongo ObjectIds
         pipeline.append({
             "$project": {
                 "_id": 0,
@@ -55,7 +55,7 @@ class MongoCatalogRepository(CatalogRepository):
             }
         })
 
-        # 5. Paginación
+        # 5. Pagination
         if skip > 0:
             pipeline.append({"$skip": skip})
         pipeline.append({"$limit": limit})

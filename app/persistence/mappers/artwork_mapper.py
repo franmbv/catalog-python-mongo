@@ -6,7 +6,7 @@ from app.domain.models.artwork import Artwork
 class ArtworkMapper:
     @staticmethod
     def to_domain(entity: ArtworkEntity) -> Artwork:
-        """Convierte una entidad de persistencia en un modelo de dominio de obra."""
+        """Converts a persistence entity into an artwork domain model."""
         return Artwork(
             id_sql=entity.id_sql,
             genero_id=entity.genero_id,
@@ -22,7 +22,7 @@ class ArtworkMapper:
 
     @staticmethod
     def to_entity(domain: Artwork) -> ArtworkEntity:
-        """Convierte un modelo de dominio en una entidad de persistencia."""
+        """Converts a domain model into a persistence entity."""
         return ArtworkEntity(
             id_sql=domain.id_sql,
             genero_id=domain.genero_id,
@@ -38,6 +38,6 @@ class ArtworkMapper:
 
     @staticmethod
     def to_document(domain: Artwork) -> dict[str, Any]:
-        """Genera el diccionario BSON para guardar en MongoDB."""
+        """Generates a clean BSON dictionary for MongoDB insertion/update."""
         entity = ArtworkMapper.to_entity(domain)
         return entity.model_dump(by_alias=True, exclude_none=True, exclude={"id"})

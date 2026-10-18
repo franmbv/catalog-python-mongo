@@ -22,13 +22,13 @@ from app.domain.services import (
 
 
 def get_db(request: Request) -> AsyncIOMotorDatabase:
-    """Obtiene la instancia de la base de datos desde app.state o fallback a get_database()."""
+    """Retrieves the database instance from app.state or falls back to get_database()."""
     if hasattr(request.app.state, "db") and request.app.state.db is not None:
         return request.app.state.db
     return get_database()
 
 
-# ── Repositorios ──────────────────────────────────────────────────
+# ── Repositories ──────────────────────────────────────────────────
 def get_artist_repository(db: AsyncIOMotorDatabase = Depends(get_db)) -> ArtistRepository:
     return MongoArtistRepository(db)
 
@@ -45,7 +45,7 @@ def get_catalog_repository(db: AsyncIOMotorDatabase = Depends(get_db)) -> Catalo
     return MongoCatalogRepository(db)
 
 
-# ── Servicios de Dominio ──────────────────────────────────────────
+# ── Domain Services ──────────────────────────────────────────────
 def get_artist_service(
     artist_repo: ArtistRepository = Depends(get_artist_repository),
 ) -> ArtistService:

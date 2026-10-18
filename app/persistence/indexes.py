@@ -3,19 +3,19 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 
 
 async def init_indexes(db: AsyncIOMotorDatabase) -> None:
-    """Crea los índices necesarios para garantizar unicidad y optimizar búsquedas."""
-    # 1. Artistas: id_sql único
+    """Creates required indexes to enforce uniqueness and optimize queries."""
+    # 1. Artists: unique id_sql index
     await db.artists.create_index("id_sql", unique=True)
 
-    # 2. Categorías: id_sql único
+    # 2. Categories: unique id_sql index
     await db.categories.create_index("id_sql", unique=True)
 
-    # 3. Obras: id_sql único, autor_id indexado para validaciones y lookups
+    # 3. Artworks: unique id_sql, indexed autor_id and genero_id for lookups
     await db.artworks.create_index("id_sql", unique=True)
     await db.artworks.create_index("autor_id")
     await db.artworks.create_index("genero_id")
 
-    # 4. Índice compuesto para la búsqueda y filtrado del catálogo
+    # 4. Compound index for catalog searching and filtering
     await db.artworks.create_index([
         ("genero_id", 1),
         ("estatus", 1),

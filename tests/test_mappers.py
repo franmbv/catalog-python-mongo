@@ -12,19 +12,19 @@ def test_artist_mapper_bidirectional():
         estado="Inactivo",
     )
 
-    # Dominio -> Entidad
+    # Domain -> Entity
     entity = ArtistMapper.to_entity(domain_artist)
     assert isinstance(entity, ArtistEntity)
     assert entity.id_sql == 10
     assert entity.nombre == "Pablo"
 
-    # Entidad -> Dominio
+    # Entity -> Domain
     reconstructed = ArtistMapper.to_domain(entity)
     assert isinstance(reconstructed, Artist)
     assert reconstructed.id_sql == 10
     assert reconstructed.nombre == "Pablo"
 
-    # Dominio -> Documento BSON para Mongo
+    # Domain -> BSON Document for MongoDB
     doc = ArtistMapper.to_document(domain_artist)
     assert "_id" not in doc
     assert doc["id_sql"] == 10

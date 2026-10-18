@@ -15,7 +15,7 @@ router = APIRouter(tags=["Artworks"])
 @router.post("/", response_model=ArtworkResponseDTO, status_code=status.HTTP_201_CREATED)
 async def create_artwork(
     dto: ArtworkCreateDTO,
-    sync: bool = Query(False, description="Si es True, realiza un Upsert idempotente para sincronización"),
+    sync: bool = Query(False, description="If True, performs an idempotent Upsert for synchronization"),
     service: ArtworkService = Depends(get_artwork_service),
 ):
     artwork_model = Artwork(**dto.model_dump())
@@ -55,4 +55,4 @@ async def delete_artwork(
     service: ArtworkService = Depends(get_artwork_service),
 ):
     await service.delete_artwork(id)
-    return {"msg": "Obra borrada del catálogo", "id_sql": id}
+    return {"msg": "Artwork deleted from catalog", "id_sql": id}

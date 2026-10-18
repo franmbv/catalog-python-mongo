@@ -20,33 +20,33 @@ from app.web.routers import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: Conectar a la base de datos e inicializar índices
+    # Startup: Connect to database and initialize indexes
     db = get_database()
     app.state.db = db
     try:
         await init_indexes(db)
     except Exception as e:
-        print(f"Advertencia: No se pudieron inicializar los índices automáticamente: {e}")
+        print(f"Warning: Could not automatically initialize indexes: {e}")
     yield
-    # Shutdown: Cerrar conexiones limpiamente
+    # Shutdown: Cleanly close database connections
     close_mongo_client()
 
 
 app = FastAPI(
     title="Atrium Catalog API (Microservice)",
-    description="Microservicio NoSQL de catálogo y motor polimórfico para Atrium",
+    description="NoSQL catalog and polymorphic query microservice for Atrium",
     version="1.0.0",
     lifespan=lifespan,
 )
 
-# ---- Manejadores Globales de Errores (Dominio -> HTTP) ----
+# ---- Global Error Handlers (Domain -> HTTP) ----
 register_error_handlers(app)
 
-# ---- Configuración de CORS ----
+# ---- CORS Configuration ----
 cors_origins_env = os.getenv("CORS_ORIGINS", "http://localhost,http://localhost:3000,http://localhost:5000")
 origins = [origin.strip() for origin in cors_origins_env.split(",") if origin.strip()]
 
-# Si contiene '*', allow_credentials no puede ser True según la especificación del navegador
+# If wildcard '*' is included, allow_credentials cannot be True per browser specification
 allow_creds = "*" not in origins
 
 app.add_middleware(
@@ -57,17 +57,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ---- Montaje de Routers ----
-# 1. Health check para orquestadores y gateway
+# ---- Mount Routers ----
+# 1. Health check for orchestrators and gateways
 app.include_router(health_router)
 
-# 2. Rutas estándar en plural
+# 2. Standard plural REST routes
 app.include_router(artists_router, prefix="/artists")
 app.include_router(categories_router, prefix="/categories")
 app.include_router(artworks_router, prefix="/artworks")
 app.include_router(catalog_router, prefix="/catalog")
 
-# 3. Compatibilidad hacia atrás (rutas en singular)
+# 3. Backward compatibility (singular routes)
 app.include_router(artists_router, prefix="/artist", include_in_schema=False)
 app.include_router(categories_router, prefix="/category", include_in_schema=False)
 app.include_router(artworks_router, prefix="/artwork", include_in_schema=False)

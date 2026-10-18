@@ -15,7 +15,7 @@ class CategoryService:
     async def create_category(self, category: Category, sync_mode: bool = False) -> Category:
         existing = await self.category_repo.get_by_id_sql(category.id_sql)
         if existing and not sync_mode:
-            raise EntityAlreadyExistsError(f"La categoría con ID {category.id_sql} ya existe.")
+            raise EntityAlreadyExistsError(f"Category with ID {category.id_sql} already exists.")
         if sync_mode:
             return await self.category_repo.upsert(category)
         return await self.category_repo.create(category)
@@ -23,7 +23,7 @@ class CategoryService:
     async def get_category(self, id_sql: int) -> Category:
         category = await self.category_repo.get_by_id_sql(id_sql)
         if not category:
-            raise EntityNotFoundError(f"Categoría con ID {id_sql} no encontrada.")
+            raise EntityNotFoundError(f"Category with ID {id_sql} not found.")
         return category
 
     async def update_category(self, id_sql: int, data: dict) -> Category:
@@ -35,6 +35,6 @@ class CategoryService:
         has_works = await self.category_repo.has_artworks(id_sql)
         if has_works:
             raise BusinessRuleConflictError(
-                f"No se puede borrar la categoría con ID {id_sql} porque tiene obras asociadas."
+                f"Cannot delete category with ID {id_sql} because it has associated artworks."
             )
         return await self.category_repo.delete(id_sql)
